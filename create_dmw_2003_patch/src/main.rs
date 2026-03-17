@@ -1,8 +1,6 @@
 use base64::prelude::*;
-use bzip2::Compression;
-use bzip2::write::BzEncoder;
+use flips::IpsBuilder;
 use std::fs;
-use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -31,20 +29,19 @@ fn find_changes(dir: &Path, changes: &mut Vec<Patch>) -> anyhow::Result<()> {
             let stripped = path.strip_prefix("./source_bin_extracted")?;
             let patched_path = Path::new("./patched_bin_extracted").join(stripped);
 
-            let source_file = fs::read(&path)?;
-            let patched_file = fs::read(&patched_path)?;
+            let cmp_res = Command::new("cmp").arg(&path).arg(&patched_path).output()?;
 
             // if changed
-            if source_file != patched_file {
-                let mut patch = Vec::new();
+            if !cmp_res.stdout.is_empty() {
+                let source_file = fs::read(&path)?;
+                let patched_file = fs::read(&patched_path)?;
 
-                bsdiff::diff(&source_file, &patched_file, &mut patch)?;
+                let patch = IpsBuilder::new()
+                    .source(source_file)
+                    .target(patched_file)
+                    .build()?;
 
-                let mut encoder = BzEncoder::new(Vec::new(), Compression::best());
-
-                encoder.write_all(&patch)?;
-
-                let base_64_str = BASE64_STANDARD.encode(encoder.finish()?);
+                let base_64_str = BASE64_STANDARD.encode(patch.as_ref());
 
                 changes.push(Patch {
                     target: Path::new("./").join(stripped),
