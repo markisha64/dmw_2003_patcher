@@ -10,7 +10,7 @@ use create_dmw_2003_patch::{Patch, PatchJSON};
 #[derive(Parser)]
 struct Args {
     source_bin: PathBuf,
-    patched_bin: PathBuf,
+    updated_bin: PathBuf,
     out_name: PathBuf,
 }
 
@@ -27,18 +27,18 @@ fn find_changes(dir: &Path, changes: &mut Vec<Patch>) -> anyhow::Result<()> {
             find_changes(&path, changes)?;
         } else {
             let stripped = path.strip_prefix("./source_bin_extracted")?;
-            let patched_path = Path::new("./patched_bin_extracted").join(stripped);
+            let updated_path = Path::new("./updated_bin_extracted").join(stripped);
 
-            let cmp_res = Command::new("cmp").arg(&path).arg(&patched_path).output()?;
+            let cmp_res = Command::new("cmp").arg(&path).arg(&updated_path).output()?;
 
             // if changed
             if !cmp_res.stdout.is_empty() {
                 let source_file = fs::read(&path)?;
-                let patched_file = fs::read(&patched_path)?;
+                let updated_file = fs::read(&updated_path)?;
 
                 let patch = IpsBuilder::new()
                     .source(source_file)
-                    .target(patched_file)
+                    .target(updated_file)
                     .build()?;
 
                 let base_64_str = BASE64_STANDARD.encode(patch.as_ref());
@@ -66,9 +66,9 @@ fn main() -> anyhow::Result<()> {
 
     Command::new("dumpsxiso")
         .arg("-x")
-        .arg("patched_bin_extracted")
+        .arg("updated_bin_extracted")
         .arg("-pt")
-        .arg(&args.patched_bin)
+        .arg(&args.updated_bin)
         .output()?;
 
     let mut changes = Vec::new();
@@ -81,7 +81,7 @@ fn main() -> anyhow::Result<()> {
     )?;
 
     fs::remove_dir_all("./source_bin_extracted")?;
-    fs::remove_dir_all("./patched_bin_extracted")?;
+    fs::remove_dir_all("./updated_bin_extracted")?;
 
     Ok(())
 }
