@@ -4,7 +4,6 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-async-fs = "2.2.0"
 blake3 = "1.8.3"
 clap = { version = "4.6.0", features = ["derive"] }
 dioxus = { version = "0.7.3", features = ["desktop"] }
