@@ -2,7 +2,13 @@ use clap::Parser;
 use std::path::PathBuf;
 use tokio::io::AsyncReadExt as _;
 
-use dioxus::prelude::*;
+use dioxus::{
+    desktop::{
+        Config, WindowBuilder,
+        wry::dpi::{PhysicalSize, Size},
+    },
+    prelude::*,
+};
 
 static CSS: Asset = asset!("/assets/style.css");
 
@@ -33,11 +39,31 @@ fn app() -> Element {
     };
 
     let checksum_status = rom.source_bin.map(|_| match checksum {
-        ChecksumStatus::DigimonWorld2003 => ("✓ Digimon World 2003", "lawngreen"),
-        ChecksumStatus::DigimonWorld3US => ("x Digimon World 3", "red"),
-        ChecksumStatus::DigimonWorld3J => ("x Digimon World 3", "red"),
-        ChecksumStatus::Unknown => ("⚠ Unknown Checksum", "yellow"),
-        ChecksumStatus::Checking => ("⚠ Verifying Checksum", "yellow"),
+        ChecksumStatus::DigimonWorld2003 => (
+            "✓ Digimon World 2003",
+            "lawngreen",
+            "Perfect ROM For Patching",
+        ),
+        ChecksumStatus::DigimonWorld3US => (
+            "x Digimon World 3 (US)",
+            "red",
+            "The Patches Won't Work With This ROM",
+        ),
+        ChecksumStatus::DigimonWorld3J => (
+            "x Digimon World 3 (Japan)",
+            "red",
+            "The Patches Won't Work With This ROM",
+        ),
+        ChecksumStatus::Unknown => (
+            "⚠ Unknown Checksum",
+            "yellow",
+            "Unknown ROM, Proceed With Caution",
+        ),
+        ChecksumStatus::Checking => (
+            "⚠ Verifying Checksum",
+            "yellow",
+            "Generating Checksum To Verify ROM",
+        ),
     });
 
     rsx! {
@@ -58,42 +84,54 @@ fn app() -> Element {
                                         source_bin: Some(fpath.clone()),
                                     });
                                 checksum_state.set(ChecksumStatus::Checking);
-
                                 spawn(async move {
                                     let hash = tokio::spawn(async {
-                                        let mut file = tokio::fs::File::open(fpath).await.unwrap();
-                                        let mut hasher = blake3::Hasher::new();
-
-                                        let mut buffer = [0u8; 1024 * 512];
-
-                                        loop {
-                                            let n = file.read(&mut buffer).await.unwrap();
-                                            if n == 0 {
-                                                break;
+                                            let mut file = tokio::fs::File::open(fpath).await.unwrap();
+                                            let mut hasher = blake3::Hasher::new();
+                                            let mut buffer = [0u8; 1024 * 512];
+                                            loop {
+                                                let n = file.read(&mut buffer).await.unwrap();
+                                                if n == 0 {
+                                                    break;
+                                                }
+                                                hasher.update(&buffer[..n]);
                                             }
-                                            hasher.update(&buffer[..n]);
-                                        }
-
-                                        hasher.finalize()
-                                    }).await.unwrap();
-
-                                    checksum_state.set(match hash.to_string().as_str() {
-                                        "e87062e5408447c77033feb8b8393c9b02e407e71aa0c9bb56b3339f6e47571e" => ChecksumStatus::DigimonWorld2003,
-                                        "4838e14a32313e5b59ce613f9a9d72a8de762bec2dcdb46f085620283656b79f" => ChecksumStatus::DigimonWorld3US,
-                                        "2e95551f709dfe8b3ac9bd245a4fb5dd036ed73baaa431f91ce03c119719a2e8" => ChecksumStatus::DigimonWorld3J,
-                                        _ => ChecksumStatus::Unknown
-                                    });
+                                            hasher.finalize()
+                                        })
+                                        .await
+                                        .unwrap();
+                                    checksum_state
+                                        .set(
+                                            match hash.to_string().as_str() {
+                                                "e87062e5408447c77033feb8b8393c9b02e407e71aa0c9bb56b3339f6e47571e" => {
+                                                    ChecksumStatus::DigimonWorld2003
+                                                }
+                                                "4838e14a32313e5b59ce613f9a9d72a8de762bec2dcdb46f085620283656b79f" => {
+                                                    ChecksumStatus::DigimonWorld3US
+                                                }
+                                                "2e95551f709dfe8b3ac9bd245a4fb5dd036ed73baaa431f91ce03c119719a2e8" => {
+                                                    ChecksumStatus::DigimonWorld3J
+                                                }
+                                                _ => ChecksumStatus::Unknown,
+                                            },
+                                        );
                                 });
                             }
                         },
                     }
-                    if let Some((string, color)) = checksum_status {
-                        div {
-                            style: "color: {color};",
-                            "{string}"
+                    div { class: "segment tooltip",
+                        if let Some((string, color, tooltip)) = checksum_status {
+                            div { style: "color: {color};",
+                                div { class: "tooltiptext", "{tooltip}" }
+                                "{string}"
+                            }
+                        } else {
+                            div { style: "color: yellow;",
+                                "Checksum Will Be Checked After You Select A ROM"
+                            }
                         }
                     }
-                },
+                }
             }
         }
     }
@@ -110,7 +148,18 @@ fn main() {
     match &args.source_bin {
         Some(_) => todo!("need to make this"),
         None => {
-            launch(app);
+            LaunchBuilder::desktop()
+                .with_cfg(
+                    Config::default().with_window(
+                        WindowBuilder::new()
+                            .with_resizable(true)
+                            .with_inner_size(Size::Physical(PhysicalSize {
+                                width: 800,
+                                height: 800,
+                            })),
+                    ),
+                )
+                .launch(app);
         }
     }
 }
