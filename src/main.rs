@@ -60,7 +60,6 @@ fn app() -> Element {
                                 checksum_state.set(ChecksumStatus::Checking);
 
                                 spawn(async move {
-                                    info!("hashing");
                                     let hash = tokio::spawn(async {
                                         let mut file = tokio::fs::File::open(fpath).await.unwrap();
                                         let mut hasher = blake3::Hasher::new();
@@ -77,7 +76,6 @@ fn app() -> Element {
 
                                         hasher.finalize()
                                     }).await.unwrap();
-                                    info!("done");
 
                                     checksum_state.set(match hash.to_string().as_str() {
                                         "e87062e5408447c77033feb8b8393c9b02e407e71aa0c9bb56b3339f6e47571e" => ChecksumStatus::DigimonWorld2003,
