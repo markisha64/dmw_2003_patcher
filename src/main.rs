@@ -10,6 +10,11 @@ use dioxus::{
     prelude::*,
 };
 
+use crate::json::Preset;
+
+mod checkbox;
+mod json;
+
 static CSS: Asset = asset!("/assets/style.css");
 
 #[derive(Clone, Copy)]
@@ -29,9 +34,11 @@ struct RomState {
 fn app() -> Element {
     let mut rom_state = use_signal(|| RomState { source_bin: None });
     let mut checksum_state = use_signal(|| ChecksumStatus::Checking);
+    let mut preset_state = use_signal(Preset::default);
 
     let rom = rom_state();
     let checksum = checksum_state();
+    let preset = preset_state();
 
     let file_name_cl: String = match &rom.source_bin {
         Some(file) => String::from(file.file_name().unwrap().to_str().unwrap()),
@@ -129,6 +136,237 @@ fn app() -> Element {
                             div { style: "color: yellow;",
                                 "Checksum Will Be Checked After You Select A ROM"
                             }
+                        }
+                    }
+                }
+            }
+        }
+        div { class: "left",
+            div { class: "column",
+                div { class: "segment",
+                    div { "Quality Of Life" }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "NTSC",
+                            tooltip: "Makes The Game Run At 60fps NTSC",
+                            id: "ntsc_checkbox",
+                            checked: preset.ntsc,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().ntsc = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Fast Admin Center",
+                            tooltip: "Skips The Staff Pass Quest",
+                            id: "fast_admin_center_checkbox",
+                            checked: preset.fast_admin_center,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().fast_admin_center = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Fast Baronmon",
+                            tooltip: "TNT Chip Baronmon Appears Right After Admin Center",
+                            id: "fast_baronmon_checkbox",
+                            checked: preset.fast_baronmon,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().fast_baronmon = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Fast Sepikmon",
+                            tooltip: "Skips The Sepikmon Quest, Just Go Back To Jungle Grave",
+                            id: "fast_sepikmon_checkbox",
+                            checked: preset.fast_sepikmon,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().fast_sepikmon = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Fast Start",
+                            tooltip: "Skips Most Of The Starting Cutscenes",
+                            id: "fast_start_checkbox",
+                            checked: preset.fast_start,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().fast_start = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Folder Bag Cutscene Skip",
+                            tooltip: "Skips The Folder Bag Cutscene (Still Need To Talk To Divermon)",
+                            id: "folder_bag_cutscene_skip_checkbox",
+                            checked: preset.folder_bag_cutscene_skip,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().folder_bag_cutscene_skip = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Post Game Unlock",
+                            tooltip: "No Longer Need To Get Legendary Weapons To Finish Post Game",
+                            id: "post_game_unlock_checkbox",
+                            checked: preset.post_game_unlock,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().post_game_unlock = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Fast Text",
+                            tooltip: "Inbuilt Turbo For Textboxes (Not Recommended)",
+                            id: "fast_text_checkbox",
+                            checked: preset.fast_text,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().fast_text = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Fixed Fields",
+                            tooltip: "Fixes Bugged Field Moves",
+                            id: "fixed_fields_checkbox",
+                            checked: preset.fixed_fields,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().fixed_fields = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Improved Hp Proxy",
+                            tooltip: "Instead Of Reducing Damage By 10/20, Decreases It By 10%/20%",
+                            id: "improved_hp_proxy_checkbox",
+                            checked: preset.improved_hp_proxy,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().improved_hp_proxy = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Uncapped DV EXP",
+                            tooltip: "You're Usually Limited To 1 Digivolution Level Up Per Battle, Removes This Cap",
+                            id: "uncapped_dv_exp_checkbox",
+                            checked: preset.uncapped_dv_exp,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().uncapped_dv_exp = x;
+                            },
+                        }
+                    }
+                }
+            }
+            div { class: "column",
+                div { class: "segment",
+                    div { "Ironmon" }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Card Battle Disable",
+                            tooltip: "You Can No Longer Do Card Battles",
+                            id: "card_battle_disable_checkbox",
+                            checked: preset.card_battle_disable,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().card_battle_disable = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "No Counter Crest",
+                            tooltip: "Removes Counter Crest From Drops",
+                            id: "no_counter_crest_checkbox",
+                            checked: preset.no_counter_crest,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().no_counter_crest = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "No Running Away",
+                            tooltip: "Neither You Or Enemy Digimon Can Run Away",
+                            id: "no_running_away_checkbox",
+                            checked: preset.no_running_away,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().no_running_away = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Forced Encounter Disable",
+                            tooltip: "Disables Forced Encounters (Like East Wire Forest Kuwagamon)",
+                            id: "forced_encounter_disable_checkbox",
+                            checked: preset.forced_encounter_disable,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().forced_encounter_disable = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Random Encounter Disable",
+                            tooltip: "Disables Random Encounters",
+                            id: "random_encounter_disable_checkbox",
+                            checked: preset.random_encounter_disable,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().random_encounter_disable = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Disable Fishing And Kicking",
+                            tooltip: "You Can No Longer Fish Or Kick Trees",
+                            id: "disable_fishing_kicking_checkbox",
+                            checked: preset.disable_fishing_kicking,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().disable_fishing_kicking = x;
+                            },
+                        }
+                    }
+                }
+                div { class: "segment",
+                    div { "Other" }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Disable Script Items",
+                            tooltip: "Scripts No Longer Give Items And Bits",
+                            id: "disable_script_items_checkbox",
+                            checked: preset.disable_script_items,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().disable_script_items = x;
+                            },
                         }
                     }
                 }

@@ -1129,6 +1129,8 @@ dependencies = [
  "blake3",
  "clap",
  "dioxus",
+ "serde",
+ "serde_json",
  "tokio",
 ]
 
