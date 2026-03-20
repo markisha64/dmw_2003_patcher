@@ -36,21 +36,21 @@ jobs:
       run: cargo build --verbose --release --locked
     - name: Build mkpsxiso
       run: |
-        cmake --preset ci -S ./mkpsxiso -B ./mkpsxiso/build
+        cmake --preset release -S ./mkpsxiso -B ./mkpsxiso/build
         cmake --build ./mkpsxiso/build --config Release
     - name: Construct artifact
       run: |
         mkdir artifact
         cp -r assets artifact/assets
-        cp target/release/dmw3_randomizer artifact/
+        cp target/release/dmw_2003_patcher artifact/
         cp mkpsxiso/build/mkpsxiso artifact/
         cp mkpsxiso/build/dumpsxiso artifact/
-        zip -r dmw3-randomizer-linux.zip artifact
+        zip -r dmw-2003-patcher-linux.zip artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: dmw3-randomizer-linux
-        path: dmw3-randomizer-linux.zip
+        name: dmw-2003-patcher-linux
+        path: dmw-2003-patcher-linux.zip
   
   build-windows:
     runs-on: windows-2022
@@ -79,12 +79,12 @@ jobs:
         xcopy assets\ artifact\assets /i
         xcopy target\release\*.exe artifact\
         xcopy mkpsxiso\build\Release\*.exe artifact\
-        Compress-Archive -Path artifact\* -DestinationPath dmw3-randomizer-windows.zip
+        Compress-Archive -Path artifact\* -DestinationPath dmw-2003-patcher-windows.zip
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: dmw3-randomizer-windows
-        path: dmw3-randomizer-windows.zip
+        name: dmw-2003-patcher-windows
+        path: dmw-2003-patcher-windows.zip
 
   create-release:
     name:    Create release
@@ -104,5 +104,5 @@ jobs:
       with:
         fail_on_unmatched_files: true
         files: |
-          dmw3-randomizer-linux/*
-          dmw3-randomizer-windows/*
+          dmw-2003-patcher-linux/*
+          dmw-2003-patcher-windows/*
