@@ -15,8 +15,6 @@ use crate::json::Preset;
 mod checkbox;
 mod json;
 
-static CSS: Asset = asset!("/assets/style.css");
-
 #[derive(Clone, Copy)]
 enum ChecksumStatus {
     DigimonWorld2003,
@@ -75,7 +73,7 @@ fn app() -> Element {
 
     rsx! {
         div {
-            Stylesheet { href: CSS }
+            document::Stylesheet { href: asset!("../public/style.css") },
             div { class: "inline",
                 div { class: "center",
                     label { class: "file-upload", r#for: "file-upload", "{file_name_cl}" }
@@ -84,7 +82,7 @@ fn app() -> Element {
                         r#type: "file",
                         accept: ".bin",
                         onchange: move |x: Event<FormData>| {
-                            if let Some(file) = x.files().first() {
+                            if let Some(file) = &x.files().first() {
                                 let fpath = file.path();
                                 rom_state
                                     .set(RomState {

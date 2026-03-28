@@ -1,0 +1,21 @@
+
+[application]
+name = "DMW2003 Patcher"
+default_platform = "desktop"
+out_dir = "dist"
+asset_dir = "assets"
+
+[web.app]
+title = "DMW2003 Patcher"
+
+[web.resource]
+style = []
+script = []
+
+[web.resource.dev]
+
+[web.watcher]
+
+[bundle]
+icon = []
+

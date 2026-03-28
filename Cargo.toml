@@ -6,10 +6,20 @@ edition = "2024"
 [dependencies]
 blake3 = "1.8.3"
 clap = { version = "4.6.0", features = ["derive"] }
-dioxus = { version = "0.7.3", features = ["desktop"] }
+dioxus = { version = "0.7.4", features = ["desktop"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
 tokio = "1.50.0"
 
 [workspace]
 members = ["create_dmw_2003_patch"]
+
+[profile.wasm-dev]
+inherits = "dev"
+opt-level = 1
+
+[profile.server-dev]
+inherits = "dev"
+
+[profile.android-dev]
+inherits = "dev"
