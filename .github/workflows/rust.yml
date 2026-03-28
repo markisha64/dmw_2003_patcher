@@ -43,8 +43,8 @@ jobs:
         mkdir artifact
         cp -r public artifact/public
         cp target/release/dmw_2003_patcher artifact/
-        cp mkpsxiso/build/mkpsxiso artifact/
-        cp mkpsxiso/build/dumpsxiso artifact/
+        cp mkpsxiso/build/Release/mkpsxiso artifact/
+        cp mkpsxiso/build/Release/dumpsxiso artifact/
         zip -r dmw-2003-patcher-linux.zip artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
