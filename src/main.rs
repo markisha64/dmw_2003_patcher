@@ -29,6 +29,11 @@ struct RomState {
     source_bin: Option<PathBuf>,
 }
 
+const _: Asset = asset!(
+    "assets/bg.png",
+    AssetOptions::builder().with_hash_suffix(false)
+);
+
 fn app() -> Element {
     let mut rom_state = use_signal(|| RomState { source_bin: None });
     let mut checksum_state = use_signal(|| ChecksumStatus::Checking);
@@ -73,7 +78,7 @@ fn app() -> Element {
 
     rsx! {
         div {
-            document::Stylesheet { href: asset!("../public/style.css") },
+            document::Stylesheet { href: asset!("../assets/style.css") },
             div { class: "inline",
                 div { class: "center",
                     label { class: "file-upload", r#for: "file-upload", "{file_name_cl}" }

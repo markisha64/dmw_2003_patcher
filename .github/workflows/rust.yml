@@ -41,7 +41,7 @@ jobs:
     - name: Construct artifact
       run: |
         mkdir artifact
-        cp -r public artifact/public
+        cp -r assets artifact/assets
         cp target/release/dmw_2003_patcher artifact/
         cp mkpsxiso/build/Release/mkpsxiso artifact/
         cp mkpsxiso/build/Release/dumpsxiso artifact/
@@ -76,7 +76,7 @@ jobs:
     - name: Construct artifact
       run: |
         mkdir artifact
-        xcopy public\ artifact\public /i
+        xcopy assets\ artifact\assets /i
         xcopy target\release\*.exe artifact\
         xcopy mkpsxiso\build\Release\*.exe artifact\
         Compress-Archive -Path artifact\* -DestinationPath dmw-2003-patcher-windows.zip
