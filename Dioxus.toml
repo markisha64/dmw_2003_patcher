@@ -18,4 +18,6 @@ script = []
 
 [bundle]
 icon = []
+identifier = "markisha.dmw.2003.patcher"
+publisher = "markisha"
 
