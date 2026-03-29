@@ -14,6 +14,8 @@ use crate::json::Preset;
 
 mod checkbox;
 mod json;
+mod mkpsxiso;
+mod patch;
 
 #[derive(Clone, Copy)]
 enum ChecksumStatus {
@@ -25,8 +27,8 @@ enum ChecksumStatus {
 }
 
 #[derive(Clone)]
-struct RomState {
-    source_bin: Option<PathBuf>,
+pub struct RomState {
+    pub source_bin: Option<PathBuf>,
 }
 
 const BG: Asset = asset!(
@@ -36,9 +38,12 @@ const BG: Asset = asset!(
 
 fn app() -> Element {
     let _ = format!("{}", BG);
-    let mut rom_state = use_signal(|| RomState { source_bin: None });
+    use_context_provider(|| Signal::new(RomState { source_bin: None }));
+    use_context_provider(|| use_signal(Preset::default));
+
+    let mut rom_state = use_context::<Signal<RomState>>();
     let mut checksum_state = use_signal(|| ChecksumStatus::Checking);
-    let mut preset_state = use_signal(Preset::default);
+    let mut preset_state = use_context::<Signal<Preset>>();
 
     let rom = rom_state();
     let checksum = checksum_state();
@@ -142,6 +147,7 @@ fn app() -> Element {
                             }
                         }
                     }
+                    patch::patch {}
                 }
             }
         }
