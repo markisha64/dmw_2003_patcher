@@ -20,4 +20,7 @@ script = []
 icon = []
 identifier = "markisha.dmw.2003.patcher"
 publisher = "markisha"
+external_bin = [
+  "external_bin/mkpsxiso"
+]
 

@@ -32,25 +32,25 @@ jobs:
           target
         key: linux-cargo-${{ hashFiles('Cargo.lock') }}
         restore-keys: linux-cargo-${{ hashFiles('Cargo.lock') }}
+    - name: Get binstall
+      run: cargo install cargo-binstall
+    - name: Get cli tool
+      run: cargo binstall dioxus-cli@0.7.4
     - name: Build mkpsxiso
       run: |
         cmake --preset release -S ./mkpsxiso -B ./mkpsxiso/build
         cmake --build ./mkpsxiso/build --config Release
-    - name: Build
-      run: cargo build --verbose --release --locked
-    - name: Construct artifact
+    - name: Prepare external bin
       run: |
-        mkdir artifact
-        cp -r assets artifact/assets
-        cp target/release/dmw_2003_patcher artifact/
-        cp mkpsxiso/build/Release/mkpsxiso artifact/
-        cp mkpsxiso/build/Release/dumpsxiso artifact/
-        zip -r dmw-2003-patcher-linux.zip artifact
+        mkdir external_bin
+        cp mkpsxiso/build/Release/mkpsxiso external_bin/
+        cp mkpsxiso/build/Release/dumpsxiso external_bin/
+    - name: Build
+      run: dx bundle --release --package-types appimage
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: dmw-2003-patcher-linux
-        path: dmw-2003-patcher-linux.zip
+        path: dist/*
   
   build-windows:
     runs-on: windows-2022
@@ -67,24 +67,24 @@ jobs:
           target
         key: windows-cargo-${{ hashFiles('Cargo.lock') }}
         restore-keys: windows-cargo-${{ hashFiles('Cargo.lock') }}
+    - name: Get binstall
+      run: cargo install cargo-binstall
+    - name: Get cli tool
+      run: cargo binstall dioxus-cli@0.7.4
     - name: Build mkpsxiso
       run: |
         cmake --preset release -S ./mkpsxiso -B ./mkpsxiso/build -G "Visual Studio 17 2022"
         cmake --build ./mkpsxiso/build --config Release
-    - name: Build
-      run: cargo build --verbose --release --locked
-    - name: Construct artifact
+    - name: Prepare external bin
       run: |
-        mkdir artifact
-        xcopy assets\ artifact\assets /i
+        mkdir external_bin
         xcopy target\release\*.exe artifact\
-        xcopy mkpsxiso\build\Release\*.exe artifact\
-        Compress-Archive -Path artifact\* -DestinationPath dmw-2003-patcher-windows.zip
+    - name: Build
+      run: dx bundle --release --package-types msi
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: dmw-2003-patcher-windows
-        path: dmw-2003-patcher-windows.zip
+        path: dist/*
 
   create-release:
     name:    Create release
@@ -103,6 +103,4 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         fail_on_unmatched_files: true
-        files: |
-          dmw-2003-patcher-linux/*
-          dmw-2003-patcher-windows/*
+        files: dist/*

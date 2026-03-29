@@ -29,12 +29,13 @@ struct RomState {
     source_bin: Option<PathBuf>,
 }
 
-const _: Asset = asset!(
+const BG: Asset = asset!(
     "assets/bg.png",
     AssetOptions::builder().with_hash_suffix(false)
 );
 
 fn app() -> Element {
+    let _ = format!("{}", BG);
     let mut rom_state = use_signal(|| RomState { source_bin: None });
     let mut checksum_state = use_signal(|| ChecksumStatus::Checking);
     let mut preset_state = use_signal(Preset::default);
