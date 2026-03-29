@@ -85,7 +85,7 @@ jobs:
         mkdir artifact
         xcopy target\dx\dmw_2003_patcher\release\windows\app\* artifact\ /i /e
         xcopy mkpsxiso\build\Release\*.exe artifact\
-        Compress-Archive -Path artifact\* -DestinationPath dmw3-randomizer-windows.zip
+        Compress-Archive -Path artifact\* -DestinationPath dmw-2003-patcher-windows.zip
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
