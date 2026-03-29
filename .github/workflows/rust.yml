@@ -40,17 +40,20 @@ jobs:
       run: |
         cmake --preset release -S ./mkpsxiso -B ./mkpsxiso/build
         cmake --build ./mkpsxiso/build --config Release
-    - name: Prepare external bin
-      run: |
-        mkdir external_bin
-        cp mkpsxiso/build/Release/mkpsxiso external_bin/
-        cp mkpsxiso/build/Release/dumpsxiso external_bin/
     - name: Build
-      run: dx bundle --release --package-types appimage
+      run: dx build --release
+    - name: Construct artifact
+      run: |
+        mkdir artifact
+        cp -r target/dx/dmw_2003_patcher/release/linux/app/* artifact/
+        cp mkpsxiso/build/Release/mkpsxiso artifact/
+        cp mkpsxiso/build/Release/dumpsxiso artifact/
+        zip -r dmw-2003-patcher-linux.zip artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        path: dist/*
+        name: dmw-2003-patcher-linux
+        path: dmw-2003-patcher-linux.zip
   
   build-windows:
     runs-on: windows-2022
@@ -75,16 +78,19 @@ jobs:
       run: |
         cmake --preset release -S ./mkpsxiso -B ./mkpsxiso/build -G "Visual Studio 17 2022"
         cmake --build ./mkpsxiso/build --config Release
-    - name: Prepare external bin
-      run: |
-        mkdir external_bin
-        xcopy target\release\*.exe artifact\
     - name: Build
-      run: dx bundle --release --package-types msi
-    - name: Upload artifact
+      run: dx build --release
+    - name: Construct artifact
+      run: |
+        mkdir artifact
+        xcopy target\dx\dmw_2003_patcher\release\windows\app\* artifact\ /i /e
+        xcopy mkpsxiso\build\Release\*.exe artifact\
+        Compress-Archive -Path artifact\* -DestinationPath dmw3-randomizer-windows.zip
+    - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        path: dist/*
+        name: dmw-2003-patcher-windows
+        path: dmw-2003-patcher-windows.zip
 
   create-release:
     name:    Create release
