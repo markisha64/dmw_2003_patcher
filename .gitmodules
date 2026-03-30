@@ -1,3 +1,57 @@
 [submodule "mkpsxiso"]
 	path = mkpsxiso
 	url = https://github.com/Lameguy64/mkpsxiso
+[submodule "dmw2003uncapped_dv_exp"]
+	path = dmw2003uncapped_dv_exp
+	url = https://github.com/markisha64/dmw2003uncapped_dv_exp
+[submodule "dmw_2003_random_encounters_disable"]
+	path = dmw_2003_random_encounters_disable
+	url = https://github.com/markisha64/dmw_2003_random_encounters_disable
+[submodule "dmw_2003_post_game_unlock"]
+	path = dmw_2003_post_game_unlock
+	url = https://github.com/markisha64/dmw_2003_post_game_unlock
+[submodule "dmw2003NTSC"]
+	path = dmw2003NTSC
+	url = https://github.com/markisha64/dmw2003NTSC
+[submodule "dmw_2003_no_running_away"]
+	path = dmw_2003_no_running_away
+	url = https://github.com/markisha64/dmw_2003_no_running_away
+[submodule "dmw_2003_no_cc"]
+	path = dmw_2003_no_cc
+	url = https://github.com/markisha64/dmw_2003_no_cc
+[submodule "dmw2003improved_hp_proxy"]
+	path = dmw2003improved_hp_proxy
+	url = https://github.com/markisha64/dmw2003improved_hp_proxy
+[submodule "dmw_2003_forced_encounters_disable"]
+	path = dmw_2003_forced_encounters_disable
+	url = https://github.com/markisha64/dmw_2003_forced_encounters_disable
+[submodule "dmw_2003_folder_bag_cutscene_skip"]
+	path = dmw_2003_folder_bag_cutscene_skip
+	url = https://github.com/markisha64/dmw_2003_folder_bag_cutscene_skip
+[submodule "dmw2003fixed_fields"]
+	path = dmw2003fixed_fields
+	url = https://github.com/markisha64/dmw2003fixed_fields
+[submodule "Dmw2003FastText"]
+	path = Dmw2003FastText
+	url = https://github.com/markisha64/Dmw2003FastText
+[submodule "dmw_2003_fast_start"]
+	path = dmw_2003_fast_start
+	url = https://github.com/markisha64/dmw_2003_fast_start
+[submodule "dmw_2003_fast_sepikmon"]
+	path = dmw_2003_fast_sepikmon
+	url = https://github.com/markisha64/dmw_2003_fast_sepikmon
+[submodule "dmw_2003_fast_baronmon"]
+	path = dmw_2003_fast_baronmon
+	url = https://github.com/markisha64/dmw_2003_fast_baronmon
+[submodule "dmw_2003_fast_admin_center"]
+	path = dmw_2003_fast_admin_center
+	url = https://github.com/markisha64/dmw_2003_fast_admin_center
+[submodule "dmw_2003_disable_script_items"]
+	path = dmw_2003_disable_script_items
+	url = https://github.com/markisha64/dmw_2003_disable_script_items
+[submodule "dmw_2003_fishing_kicking_disable"]
+	path = dmw_2003_fishing_kicking_disable
+	url = https://github.com/markisha64/dmw_2003_fishing_kicking_disable
+[submodule "dmw_2003_card_battle_disable"]
+	path = dmw_2003_card_battle_disable
+	url = https://github.com/markisha64/dmw_2003_card_battle_disable
