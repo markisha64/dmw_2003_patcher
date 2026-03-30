@@ -1,6 +1,5 @@
 use std::path::PathBuf;
 
-use anyhow::anyhow;
 use base64::prelude::*;
 use create_dmw_2003_patch::{Patch, PatchJSON};
 use dioxus::prelude::*;
@@ -144,7 +143,6 @@ pub fn patch() -> Element {
                                 }
                                 if preset.ntsc {
                                     apply_patch(&NTSC_PATCH, rom_name).await?;
-                                    return Err(anyhow!("testing"));
                                 }
                                 if preset.uncapped_dv_exp {
                                     apply_patch(&UNCAPPED_DV_EXP_PATCH, rom_name).await?;
@@ -153,7 +151,6 @@ pub fn patch() -> Element {
                                     apply_patch(&CARD_BATTLE_DISABLE_PATCH, rom_name).await?;
                                 }
                                 if preset.disable_script_items {
-
                                     apply_patch(&DISABLE_SCRIPT_ITEMS_PATCH, rom_name).await?;
                                 }
                                 if preset.fast_admin_center {
