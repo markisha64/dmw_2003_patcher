@@ -39,7 +39,7 @@ const BG: Asset = asset!(
 fn app() -> Element {
     let _ = format!("{}", BG);
     use_context_provider(|| Signal::new(RomState { source_bin: None }));
-    use_context_provider(|| use_signal(Preset::default));
+    use_context_provider(|| Signal::new(Preset::default()));
 
     let mut rom_state = use_context::<Signal<RomState>>();
     let mut checksum_state = use_signal(|| ChecksumStatus::Checking);

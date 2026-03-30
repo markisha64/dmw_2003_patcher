@@ -43,8 +43,8 @@ pub async fn extract(path: &std::path::PathBuf) -> anyhow::Result<bool> {
 pub async fn build(rom_name: &str, file_name: &str) -> anyhow::Result<bool> {
     let binf = find_bin("mkpsxiso").await?;
 
-    let bin = format!("randomized/{}/{}/new.bin", rom_name, file_name);
-    let cue = format!("randomized/{}/{}/new.cue", rom_name, file_name);
+    let bin = format!("patched/{}/{}/new.bin", rom_name, file_name);
+    let cue = format!("patched/{}/{}/new.cue", rom_name, file_name);
 
     Ok(Command::new(binf)
         .arg("-o")
