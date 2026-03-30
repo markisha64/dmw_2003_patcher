@@ -11,6 +11,10 @@ dioxus = { version = "0.7.3", features = ["desktop"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
 tokio = { version = "1.50.0", features = ["process"] }
+create_dmw_2003_patch = { path = "./create_dmw_2003_patch" }
+base64 = "0.22.1"
+flips = "0.2.1"
+once_cell = "1.21.4"
 
 [workspace]
 members = ["create_dmw_2003_patch"]

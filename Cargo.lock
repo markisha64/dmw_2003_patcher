@@ -1127,9 +1127,13 @@ name = "dmw_2003_patcher"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "base64",
  "blake3",
  "clap",
+ "create_dmw_2003_patch",
  "dioxus",
+ "flips",
+ "once_cell",
  "serde",
  "serde_json",
  "tokio",

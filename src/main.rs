@@ -84,7 +84,7 @@ fn app() -> Element {
 
     rsx! {
         div {
-            document::Stylesheet { href: asset!("../assets/style.css") },
+            document::Stylesheet { href: asset!("../assets/style.css") }
             div { class: "inline",
                 div { class: "center",
                     label { class: "file-upload", r#for: "file-upload", "{file_name_cl}" }
@@ -142,9 +142,7 @@ fn app() -> Element {
                                 "{string}"
                             }
                         } else {
-                            div { style: "color: yellow;",
-                                "Checksum Will Be Checked After You Select A ROM"
-                            }
+                            div { style: "color: yellow;", "Checksum Check" }
                         }
                     }
                     patch::patch {}

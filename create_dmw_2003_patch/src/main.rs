@@ -44,7 +44,7 @@ fn find_changes(dir: &Path, changes: &mut Vec<Patch>) -> anyhow::Result<()> {
                 let base_64_str = BASE64_STANDARD.encode(patch.as_ref());
 
                 changes.push(Patch {
-                    target: Path::new("./").join(stripped),
+                    target: Path::new("/").join(stripped),
                     patch: base_64_str,
                 });
             }
