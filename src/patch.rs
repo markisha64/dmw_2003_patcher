@@ -99,108 +99,166 @@ static RANDOM_ENCOUNTERS_DISABLE_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
     .unwrap()
 });
 
+macro_rules! update_count {
+    ($count:ident, $max_count:expr, $state:expr) => {{
+        $count += 1;
+        $state.set(Some(100 * $count / $max_count));
+    }};
+}
+
 #[component]
 pub fn patch() -> Element {
     let rom_state = use_context::<Signal<RomState>>();
     let preset_state = use_context::<Signal<Preset>>();
     let mut info_state: Signal<Option<String>> = use_signal(|| None);
+    let mut randomizing_state: Signal<Option<i32>> = use_signal(|| None);
 
     let rom = rom_state();
     let preset = preset_state();
     let info = info_state();
+    let randomizing = randomizing_state();
 
     rsx! {
-        div { class: "column",
-            label { r#for: "patch", class: "patch", "Patch" }
+        div { class: "column-no-stretch",
+            label { r#for: "patch", class: "patch",
+                if let Some(percent) = randomizing {
+                    div { r#style: "height: 100%; width:{percent}%;",
+                        div { class: "progress" }
+                    }
+                } else {
+                    "Patch"
+                }
+            }
             input {
                 r#type: "button",
                 id: "patch",
                 onclick: move |_| {
                     to_owned![rom];
 
-                    if let Some(file_path) = rom.source_bin {
-                        spawn(async move {
-                            let task: Result<(), anyhow::Error> = async move {
-                                info_state.set(Some("Extracting".to_string()));
+                    if randomizing.is_some() {
+                        return;
+                    }
 
-                                mkpsxiso::extract(&file_path).await?;
+                    let max_count = (preset.count_enabled() + 2) as i32;
+                    let mut count = 0i32;
 
-                                info_state.set(Some("Building".to_string()));
+                    if max_count == 2 {
+                        info_state.set(Some("No Patches Selected".to_string()));
+                        return;
+                    }
 
-                                let rom_name = file_path
-                                    .file_name()
-                                    .context("Failed file name get")?
-                                    .to_str()
-                                    .context("Failed to_str conversion")?;
-                                if preset.fast_text {
-                                    apply_patch(&FAST_TEXT_PATCH, rom_name).await?;
+                    match rom.source_bin {
+                        Some(file_path) => {
+                            randomizing_state.set(Some(100 * count / max_count));
+                            info_state.set(None);
+                            spawn(async move {
+                                let task: Result<(), anyhow::Error> = async move {
+                                    update_count!(count, max_count, randomizing_state);
+
+                                    mkpsxiso::extract(&file_path).await?;
+
+                                    let rom_name = file_path
+                                        .file_name()
+                                        .context("Failed file name get")?
+                                        .to_str()
+                                        .context("Failed to_str conversion")?;
+                                    if preset.fast_text {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&FAST_TEXT_PATCH, rom_name).await?;
+                                    }
+                                    if preset.fixed_fields {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&FIXED_FIELD_PATCH, rom_name).await?;
+                                    }
+                                    if preset.improved_hp_proxy {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&IMPROVED_HP_PROXY_PATCH, rom_name).await?;
+                                    }
+                                    if preset.ntsc {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&NTSC_PATCH, rom_name).await?;
+                                    }
+                                    if preset.uncapped_dv_exp {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&UNCAPPED_DV_EXP_PATCH, rom_name).await?;
+                                    }
+                                    if preset.card_battle_disable {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&CARD_BATTLE_DISABLE_PATCH, rom_name).await?;
+                                    }
+                                    if preset.disable_script_items {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&DISABLE_SCRIPT_ITEMS_PATCH, rom_name).await?;
+                                    }
+                                    if preset.fast_admin_center {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&FAST_ADMIN_CENTER_PATCH, rom_name).await?;
+                                    }
+                                    if preset.fast_baronmon {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&FAST_BARONMON_PATCH, rom_name).await?;
+                                    }
+                                    if preset.fast_sepikmon {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&FAST_SEPIKMON_PATCH, rom_name).await?;
+                                    }
+                                    if preset.fast_start {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&FAST_START_PATCH, rom_name).await?;
+                                    }
+                                    if preset.disable_fishing_kicking {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&FISHING_KICKING_DISABLE_PATCH, rom_name).await?;
+                                    }
+                                    if preset.folder_bag_cutscene_skip {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&FOLDER_BAG_CUTSCENE_SKIP_PATCH, rom_name)
+                                            .await?;
+                                    }
+
+                                    if preset.forced_encounter_disable {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&FORCED_ENCOUNTERS_DISABLE_PATCH, rom_name)
+                                            .await?;
+                                    }
+                                    if preset.no_counter_crest {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&NO_CC_PATCH, rom_name).await?;
+                                    }
+                                    if preset.no_running_away {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&NO_RUNNING_AWAY_PATCH, rom_name).await?;
+                                    }
+                                    if preset.post_game_unlock {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&POST_GAME_UNLOCK_PATCH, rom_name).await?;
+                                    }
+                                    if preset.random_encounter_disable {
+                                        update_count!(count, max_count, randomizing_state);
+                                        apply_patch(&RANDOM_ENCOUNTERS_DISABLE_PATCH, rom_name)
+                                            .await?;
+                                    }
+                                    update_count!(count, max_count, randomizing_state);
+                                    create_dir_all(format!("patched/{}/testing", rom_name)).await?;
+                                    mkpsxiso::build(&rom_name, "testing").await?;
+                                    update_count!(count, max_count, randomizing_state);
+                                    Ok(())
                                 }
-                                if preset.fixed_fields {
-                                    apply_patch(&FIXED_FIELD_PATCH, rom_name).await?;
+                                    .await;
+                                if let Err(err) = task {
+                                    info_state.set(Some(err.to_string()));
                                 }
-                                if preset.improved_hp_proxy {
-                                    apply_patch(&IMPROVED_HP_PROXY_PATCH, rom_name).await?;
-                                }
-                                if preset.ntsc {
-                                    apply_patch(&NTSC_PATCH, rom_name).await?;
-                                }
-                                if preset.uncapped_dv_exp {
-                                    apply_patch(&UNCAPPED_DV_EXP_PATCH, rom_name).await?;
-                                }
-                                if preset.card_battle_disable {
-                                    apply_patch(&CARD_BATTLE_DISABLE_PATCH, rom_name).await?;
-                                }
-                                if preset.disable_script_items {
-                                    apply_patch(&DISABLE_SCRIPT_ITEMS_PATCH, rom_name).await?;
-                                }
-                                if preset.fast_admin_center {
-                                    apply_patch(&FAST_ADMIN_CENTER_PATCH, rom_name).await?;
-                                }
-                                if preset.fast_baronmon {
-                                    apply_patch(&FAST_BARONMON_PATCH, rom_name).await?;
-                                }
-                                if preset.fast_sepikmon {
-                                    apply_patch(&FAST_SEPIKMON_PATCH, rom_name).await?;
-                                }
-                                if preset.fast_start {
-                                    apply_patch(&FAST_START_PATCH, rom_name).await?;
-                                }
-                                if preset.disable_fishing_kicking {
-                                    apply_patch(&FISHING_KICKING_DISABLE_PATCH, rom_name).await?;
-                                }
-                                if preset.folder_bag_cutscene_skip {
-                                    apply_patch(&FOLDER_BAG_CUTSCENE_SKIP_PATCH, rom_name).await?;
-                                }
-                                if preset.forced_encounter_disable {
-                                    apply_patch(&FORCED_ENCOUNTERS_DISABLE_PATCH, rom_name).await?;
-                                }
-                                if preset.no_counter_crest {
-                                    apply_patch(&NO_CC_PATCH, rom_name).await?;
-                                }
-                                if preset.no_running_away {
-                                    apply_patch(&NO_RUNNING_AWAY_PATCH, rom_name).await?;
-                                }
-                                if preset.post_game_unlock {
-                                    apply_patch(&POST_GAME_UNLOCK_PATCH, rom_name).await?;
-                                }
-                                if preset.random_encounter_disable {
-                                    apply_patch(&RANDOM_ENCOUNTERS_DISABLE_PATCH, rom_name).await?;
-                                }
-                                create_dir_all(format!("patched/{}/testing", rom_name)).await?;
-                                mkpsxiso::build(&rom_name, "testing").await?;
-                                info_state.set(Some("Done".to_string()));
-                                Ok(())
-                            }
-                                .await;
-                            if let Err(err) = task {
-                                info_state.set(Some(format!("{}", err)));
-                            }
-                        });
+                                randomizing_state.set(None);
+                            });
+                        }
+                        None => {
+                            info_state.set(Some("No ROM Selected".to_string()));
+                        }
                     }
                 },
             }
             if let Some(info) = info {
-                span { style: "text-align: center;", "{info}" }
+                span { style: "text-align: center; color: red;", "Err: {info}" }
             }
         }
     }

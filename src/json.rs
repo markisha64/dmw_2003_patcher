@@ -46,3 +46,31 @@ impl Default for Preset {
         }
     }
 }
+
+impl Preset {
+    pub fn count_enabled(&self) -> usize {
+        [
+            self.card_battle_disable,
+            self.disable_script_items,
+            self.fast_admin_center,
+            self.fast_baronmon,
+            self.fast_sepikmon,
+            self.fast_start,
+            self.folder_bag_cutscene_skip,
+            self.no_counter_crest,
+            self.no_running_away,
+            self.post_game_unlock,
+            self.forced_encounter_disable,
+            self.random_encounter_disable,
+            self.disable_fishing_kicking,
+            self.fast_text,
+            self.fixed_fields,
+            self.improved_hp_proxy,
+            self.ntsc,
+            self.uncapped_dv_exp,
+        ]
+        .iter()
+        .filter(|&&b| b)
+        .count()
+    }
+}
