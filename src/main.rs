@@ -1,6 +1,9 @@
 use clap::Parser;
 use std::path::PathBuf;
-use tokio::io::AsyncReadExt as _;
+use tokio::{
+    fs::{read_to_string, write},
+    io::AsyncReadExt as _,
+};
 
 use dioxus::{
     desktop::{
@@ -36,14 +39,21 @@ const BG: Asset = asset!(
     AssetOptions::builder().with_hash_suffix(false)
 );
 
+#[derive(Clone)]
+pub struct InfoState {
+    pub info: Option<String>,
+}
+
 fn app() -> Element {
     let _ = format!("{}", BG);
     use_context_provider(|| Signal::new(RomState { source_bin: None }));
     use_context_provider(|| Signal::new(Preset::default()));
+    use_context_provider(|| Signal::new(InfoState { info: None }));
 
     let mut rom_state = use_context::<Signal<RomState>>();
     let mut checksum_state = use_signal(|| ChecksumStatus::Checking);
     let mut preset_state = use_context::<Signal<Preset>>();
+    let mut info_state = use_context::<Signal<InfoState>>();
 
     let rom = rom_state();
     let checksum = checksum_state();
@@ -374,6 +384,82 @@ fn app() -> Element {
                             disabled: false,
                             onchange: move |x: bool| {
                                 preset_state.write().disable_script_items = x;
+                            },
+                        }
+                    }
+                }
+            }
+            div { class: "column",
+                div { class: "segment column",
+                    div { "Preset" }
+                    div { class: "segment",
+                        label { r#for: "default", "Default" }
+                        input {
+                            r#type: "button",
+                            id: "default",
+                            onclick: move |_| {
+                                preset_state.set(Preset::default());
+                            },
+                        }
+                    }
+                    div { class: "segment",
+                        label { r#for: "ironmon", "Ironmon" }
+                        input {
+                            r#type: "button",
+                            id: "ironmon",
+                            onclick: move |_| {
+                                preset_state.set(Preset::ironmon());
+                            },
+                        }
+                    }
+                    div { class: "segment",
+                        label { r#for: "import", "Import Preset" }
+                        input {
+                            id: "import",
+                            r#type: "file",
+                            accept: ".json",
+                            onchange: move |x: Event<FormData>| {
+                                if let Some(file) = x.files().first() {
+                                    let fpath = file.path();
+                                    spawn(async move {
+                                        let raw_file = read_to_string(fpath).await.unwrap();
+
+                                        match serde_json::from_str::<Preset>(raw_file.as_str()) {
+                                            Ok(preset) => preset_state.set(preset),
+                                            Err(_) => {
+                                                info_state
+                                                    .set(InfoState {
+                                                        info: Some("Invalid Preset JSON".to_string()),
+                                                    })
+                                            }
+                                        };
+                                    });
+                                }
+                            },
+                        }
+                    }
+                    div { class: "segment",
+                        label { r#for: "export", "Export Preset" }
+                        input {
+                            r#type: "button",
+                            id: "export",
+                            onclick: move |_| {
+                                to_owned![preset];
+
+                                async move {
+                                    let task: Result<(), anyhow::Error> = async move {
+                                        write("preset.json", serde_json::to_string_pretty(&preset)?).await?;
+                                        Ok(())
+                                    }
+
+                                        .await;
+                                    if let Err(e) = task {
+                                        info_state
+                                            .set(InfoState {
+                                                info: Some(e.to_string()),
+                                            });
+                                    }
+                                }
                             },
                         }
                     }

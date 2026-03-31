@@ -6,7 +6,7 @@ use dioxus::prelude::*;
 use once_cell::sync::Lazy;
 use tokio::fs::{self, create_dir_all};
 
-use crate::{RomState, json::Preset, mkpsxiso};
+use crate::{InfoState, RomState, json::Preset, mkpsxiso};
 
 async fn patch_file(patch: &Patch, rom_name: &str) -> anyhow::Result<()> {
     let mut path = PathBuf::from("./extract");
@@ -110,7 +110,7 @@ macro_rules! update_count {
 pub fn patch() -> Element {
     let rom_state = use_context::<Signal<RomState>>();
     let preset_state = use_context::<Signal<Preset>>();
-    let mut info_state: Signal<Option<String>> = use_signal(|| None);
+    let mut info_state = use_context::<Signal<InfoState>>();
     let mut randomizing_state: Signal<Option<i32>> = use_signal(|| None);
 
     let rom = rom_state();
@@ -143,20 +143,20 @@ pub fn patch() -> Element {
                     let mut count = 0i32;
 
                     if max_count == 2 {
-                        info_state.set(Some("No Patches Selected".to_string()));
+                        info_state
+                            .set(InfoState {
+                                info: Some("No Patches Selected".to_string()),
+                            });
                         return;
                     }
-
                     match rom.source_bin {
                         Some(file_path) => {
                             randomizing_state.set(Some(100 * count / max_count));
-                            info_state.set(None);
+                            info_state.set(InfoState { info: None });
                             spawn(async move {
                                 let task: Result<(), anyhow::Error> = async move {
                                     update_count!(count, max_count, randomizing_state);
-
                                     mkpsxiso::extract(&file_path).await?;
-
                                     let rom_name = file_path
                                         .file_name()
                                         .context("Failed file name get")?
@@ -215,7 +215,6 @@ pub fn patch() -> Element {
                                         apply_patch(&FOLDER_BAG_CUTSCENE_SKIP_PATCH, rom_name)
                                             .await?;
                                     }
-
                                     if preset.forced_encounter_disable {
                                         update_count!(count, max_count, randomizing_state);
                                         apply_patch(&FORCED_ENCOUNTERS_DISABLE_PATCH, rom_name)
@@ -246,18 +245,24 @@ pub fn patch() -> Element {
                                 }
                                     .await;
                                 if let Err(err) = task {
-                                    info_state.set(Some(err.to_string()));
+                                    info_state
+                                        .set(InfoState {
+                                            info: Some(err.to_string()),
+                                        });
                                 }
                                 randomizing_state.set(None);
                             });
                         }
                         None => {
-                            info_state.set(Some("No ROM Selected".to_string()));
+                            info_state
+                                .set(InfoState {
+                                    info: Some("No ROM Selected".to_string()),
+                                });
                         }
                     }
                 },
             }
-            if let Some(info) = info {
+            if let Some(info) = info.info {
                 span { style: "text-align: center; color: red;", "Err: {info}" }
             }
         }

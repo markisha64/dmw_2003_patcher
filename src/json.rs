@@ -73,4 +73,27 @@ impl Preset {
         .filter(|&&b| b)
         .count()
     }
+
+    pub fn ironmon() -> Preset {
+        Preset {
+            card_battle_disable: true,
+            disable_script_items: false,
+            fast_admin_center: true,
+            fast_baronmon: true,
+            fast_sepikmon: true,
+            fast_start: true,
+            folder_bag_cutscene_skip: true,
+            no_counter_crest: true,
+            no_running_away: true,
+            post_game_unlock: true,
+            forced_encounter_disable: true,
+            random_encounter_disable: true,
+            disable_fishing_kicking: true,
+            fast_text: false,
+            fixed_fields: true,
+            improved_hp_proxy: false,
+            ntsc: true,
+            uncapped_dv_exp: true,
+        }
+    }
 }
