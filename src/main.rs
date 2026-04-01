@@ -29,11 +29,6 @@ enum ChecksumStatus {
     Checking,
 }
 
-#[derive(Clone)]
-pub struct RomState {
-    pub source_bin: Option<PathBuf>,
-}
-
 const BG: Asset = asset!(
     "assets/bg.png",
     AssetOptions::builder().with_hash_suffix(false)
@@ -44,27 +39,44 @@ pub struct InfoState {
     pub info: Option<String>,
 }
 
+const MAX_ROM_NAME: usize = 25;
+
 fn app() -> Element {
     let _ = format!("{}", BG);
-    use_context_provider(|| Signal::new(RomState { source_bin: None }));
     use_context_provider(|| Signal::new(Preset::default()));
     use_context_provider(|| Signal::new(InfoState { info: None }));
+    use_context_provider(|| Signal::new(Args::default()));
 
-    let mut rom_state = use_context::<Signal<RomState>>();
     let mut checksum_state = use_signal(|| ChecksumStatus::Checking);
     let mut preset_state = use_context::<Signal<Preset>>();
     let mut info_state = use_context::<Signal<InfoState>>();
+    let mut args_state = use_context::<Signal<Args>>();
 
-    let rom = rom_state();
     let checksum = checksum_state();
     let preset = preset_state();
+    let args = args_state();
 
-    let file_name_cl: String = match &rom.source_bin {
-        Some(file) => String::from(file.file_name().unwrap().to_str().unwrap()),
+    let file_name_cl: String = match &args.source_bin {
+        Some(file) => {
+            let string = String::from(file.file_name().unwrap().to_str().unwrap());
+
+            if string.len() > MAX_ROM_NAME {
+                format!(
+                    "{}...",
+                    string
+                        .chars()
+                        .by_ref()
+                        .take(MAX_ROM_NAME)
+                        .collect::<String>()
+                )
+            } else {
+                string
+            }
+        }
         None => String::from("Rom File"),
     };
 
-    let checksum_status = rom.source_bin.map(|_| match checksum {
+    let checksum_status = args.source_bin.map(|_| match checksum {
         ChecksumStatus::DigimonWorld2003 => (
             "✓ Digimon World 2003",
             "lawngreen",
@@ -105,10 +117,7 @@ fn app() -> Element {
                         onchange: move |x: Event<FormData>| {
                             if let Some(file) = &x.files().first() {
                                 let fpath = file.path();
-                                rom_state
-                                    .set(RomState {
-                                        source_bin: Some(fpath.clone()),
-                                    });
+                                args_state.write().source_bin = Some(fpath.clone());
                                 checksum_state.set(ChecksumStatus::Checking);
                                 spawn(async move {
                                     let hash = tokio::spawn(async {
@@ -469,29 +478,40 @@ fn app() -> Element {
     }
 }
 
-#[derive(Parser)]
+#[derive(Parser, Clone)]
 struct Args {
     source_bin: Option<PathBuf>,
+    preset: Option<PathBuf>,
+    filename: Option<String>,
+}
+
+impl Default for Args {
+    fn default() -> Self {
+        Self {
+            source_bin: None,
+            preset: None,
+            filename: None,
+        }
+    }
 }
 
 fn main() {
     let args = Args::parse();
 
-    match &args.source_bin {
-        Some(_) => todo!("need to make this"),
-        None => {
-            LaunchBuilder::desktop()
-                .with_cfg(
-                    Config::default().with_window(
-                        WindowBuilder::new()
-                            .with_resizable(true)
-                            .with_inner_size(Size::Physical(PhysicalSize {
-                                width: 800,
-                                height: 800,
-                            })),
-                    ),
-                )
-                .launch(app);
-        }
+    if args.source_bin.is_some() {
+        todo!("need to make this")
+    } else {
+        LaunchBuilder::desktop()
+            .with_cfg(
+                Config::default().with_window(
+                    WindowBuilder::new()
+                        .with_resizable(true)
+                        .with_inner_size(Size::Physical(PhysicalSize {
+                            width: 800,
+                            height: 800,
+                        })),
+                ),
+            )
+            .launch(app);
     }
 }

@@ -6,7 +6,7 @@ use dioxus::prelude::*;
 use once_cell::sync::Lazy;
 use tokio::fs::{self, create_dir_all};
 
-use crate::{InfoState, RomState, json::Preset, mkpsxiso};
+use crate::{Args, InfoState, json::Preset, mkpsxiso};
 
 async fn patch_file(patch: &Patch, rom_name: &str) -> anyhow::Result<()> {
     let mut path = PathBuf::from("./extract");
@@ -108,12 +108,12 @@ macro_rules! update_count {
 
 #[component]
 pub fn patch() -> Element {
-    let rom_state = use_context::<Signal<RomState>>();
+    let args_state = use_context::<Signal<Args>>();
     let preset_state = use_context::<Signal<Preset>>();
     let mut info_state = use_context::<Signal<InfoState>>();
     let mut randomizing_state: Signal<Option<i32>> = use_signal(|| None);
 
-    let rom = rom_state();
+    let args = args_state();
     let preset = preset_state();
     let info = info_state();
     let randomizing = randomizing_state();
@@ -133,7 +133,7 @@ pub fn patch() -> Element {
                 r#type: "button",
                 id: "patch",
                 onclick: move |_| {
-                    to_owned![rom];
+                    to_owned![args];
 
                     if randomizing.is_some() {
                         return;
@@ -149,7 +149,7 @@ pub fn patch() -> Element {
                             });
                         return;
                     }
-                    match rom.source_bin {
+                    match args.source_bin {
                         Some(file_path) => {
                             randomizing_state.set(Some(100 * count / max_count));
                             info_state.set(InfoState { info: None });
