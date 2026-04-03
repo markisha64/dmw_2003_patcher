@@ -129,7 +129,7 @@ fn app() -> Element {
                                     let hash_r: Result<Hash, anyhow::Error> = async move {
                                         let mut file = tokio::fs::File::open(fpath).await?;
                                         let mut hasher = blake3::Hasher::new();
-                                        let mut buffer = [0u8; 1024 * 512];
+                                        let mut buffer = vec![0u8; 32 * 512];
                                         loop {
                                             let n = file.read(&mut buffer).await?;
                                             if n == 0 {
