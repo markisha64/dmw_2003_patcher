@@ -1,3 +1,4 @@
+use blake3::Hash;
 use clap::Parser;
 use std::path::PathBuf;
 use tokio::{
@@ -58,7 +59,12 @@ fn app() -> Element {
 
     let file_name_cl: String = match &args.source_bin {
         Some(file) => {
-            let string = String::from(file.file_name().unwrap().to_str().unwrap());
+            let string = String::from(
+                file.file_name()
+                    .context("failed to get file_name")?
+                    .to_str()
+                    .context("failed to convert to &str")?,
+            );
 
             if string.len() > MAX_ROM_NAME {
                 format!(
@@ -120,36 +126,46 @@ fn app() -> Element {
                                 args_state.write().source_bin = Some(fpath.clone());
                                 checksum_state.set(ChecksumStatus::Checking);
                                 spawn(async move {
-                                    let hash = tokio::spawn(async {
-                                            let mut file = tokio::fs::File::open(fpath).await.unwrap();
-                                            let mut hasher = blake3::Hasher::new();
-                                            let mut buffer = [0u8; 1024 * 512];
-                                            loop {
-                                                let n = file.read(&mut buffer).await.unwrap();
-                                                if n == 0 {
-                                                    break;
-                                                }
-                                                hasher.update(&buffer[..n]);
+                                    let hash_r: Result<Hash, anyhow::Error> = async move {
+                                        let mut file = tokio::fs::File::open(fpath).await?;
+                                        let mut hasher = blake3::Hasher::new();
+                                        let mut buffer = [0u8; 1024 * 512];
+                                        loop {
+                                            let n = file.read(&mut buffer).await?;
+                                            if n == 0 {
+                                                break;
                                             }
-                                            hasher.finalize()
-                                        })
-                                        .await
-                                        .unwrap();
-                                    checksum_state
-                                        .set(
-                                            match hash.to_string().as_str() {
-                                                "e87062e5408447c77033feb8b8393c9b02e407e71aa0c9bb56b3339f6e47571e" => {
-                                                    ChecksumStatus::DigimonWorld2003
-                                                }
-                                                "4838e14a32313e5b59ce613f9a9d72a8de762bec2dcdb46f085620283656b79f" => {
-                                                    ChecksumStatus::DigimonWorld3US
-                                                }
-                                                "2e95551f709dfe8b3ac9bd245a4fb5dd036ed73baaa431f91ce03c119719a2e8" => {
-                                                    ChecksumStatus::DigimonWorld3J
-                                                }
-                                                _ => ChecksumStatus::Unknown,
-                                            },
-                                        );
+                                            hasher.update(&buffer[..n]);
+                                        }
+                                        Ok(hasher.finalize())
+                                    }
+                                        .await;
+
+                                    match hash_r {
+                                        Ok(hash) => {
+                                            checksum_state
+                                                .set(
+                                                    match hash.to_string().as_str() {
+                                                        "e87062e5408447c77033feb8b8393c9b02e407e71aa0c9bb56b3339f6e47571e" => {
+                                                            ChecksumStatus::DigimonWorld2003
+                                                        }
+                                                        "4838e14a32313e5b59ce613f9a9d72a8de762bec2dcdb46f085620283656b79f" => {
+                                                            ChecksumStatus::DigimonWorld3US
+                                                        }
+                                                        "2e95551f709dfe8b3ac9bd245a4fb5dd036ed73baaa431f91ce03c119719a2e8" => {
+                                                            ChecksumStatus::DigimonWorld3J
+                                                        }
+                                                        _ => ChecksumStatus::Unknown,
+                                                    },
+                                                );
+                                        }
+                                        Err(e) => {
+                                            info_state
+                                                .set(InfoState {
+                                                    info: Some(e.to_string()),
+                                                });
+                                        }
+                                    }
                                 });
                             }
                         },
@@ -166,17 +182,14 @@ fn app() -> Element {
                     }
                     patch::patch {}
                     div {
-                        label {
-                            r#for: "filename",
-                            "Filename"
-                        }
+                        label { r#for: "filename", "Filename" }
                         input {
                             r#type: "text",
                             id: "filename",
                             value: args.filename.clone().unwrap_or("default".to_string()),
                             onchange: move |x| {
                                 args_state.write().filename = Some(x.value());
-                            }
+                            },
                         }
                     }
                 }
@@ -449,20 +462,23 @@ fn app() -> Element {
                                 if let Some(file) = x.files().first() {
                                     let fpath = file.path();
                                     spawn(async move {
-                                        let raw_file = read_to_string(fpath).await.unwrap();
+                                        let task: Result<(), anyhow::Error> = async move {
+                                            let raw_file = read_to_string(fpath).await?;
 
-                                        match serde_json::from_str::<Preset>(raw_file.as_str()) {
-                                            Ok(preset) => {
-                                                args_state.write().filename = Some(preset.name.clone());
-                                                preset_state.set(preset)
-                                            },
-                                            Err(_) => {
-                                                info_state
-                                                    .set(InfoState {
-                                                        info: Some("Invalid Preset JSON".to_string()),
-                                                    })
-                                            }
-                                        };
+                                            let preset = serde_json::from_str::<Preset>(raw_file.as_str())?;
+                                            args_state.write().filename = Some(preset.name.clone());
+                                            preset_state.set(preset);
+
+                                            Ok(())
+                                        }
+                                            .await;
+
+                                        if let Err(e) = task {
+                                            info_state
+                                                .set(InfoState {
+                                                    info: Some(e.to_string()),
+                                                });
+                                        }
                                     });
                                 }
                             },
@@ -477,7 +493,6 @@ fn app() -> Element {
                                 to_owned![preset, args];
 
                                 preset.name = args.filename.unwrap_or("default".to_string());
-
 
                                 async move {
                                     let task: Result<(), anyhow::Error> = async move {

@@ -239,7 +239,8 @@ pub fn patch() -> Element {
                                     }
                                     update_count!(count, max_count, randomizing_state);
                                     let filename = args.filename.unwrap_or("default".to_string());
-                                    create_dir_all(format!("patched/{}/{}", rom_name, filename)).await?;
+                                    create_dir_all(format!("patched/{}/{}", rom_name, filename))
+                                        .await?;
                                     mkpsxiso::build(&rom_name, filename).await?;
                                     update_count!(count, max_count, randomizing_state);
                                     Ok(())
