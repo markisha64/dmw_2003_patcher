@@ -2,8 +2,9 @@ use blake3::Hash;
 use clap::Parser;
 use std::path::PathBuf;
 use tokio::{
-    fs::{read_to_string, write},
+    fs::{create_dir_all, read_to_string, write},
     io::AsyncReadExt as _,
+    runtime::Runtime,
 };
 
 use dioxus::{
@@ -14,7 +15,10 @@ use dioxus::{
     prelude::*,
 };
 
-use crate::json::Preset;
+use crate::{
+    json::Preset,
+    patch::{apply_patch, get_patches},
+};
 
 mod checkbox;
 mod json;
@@ -519,8 +523,11 @@ fn app() -> Element {
 
 #[derive(Parser, Clone)]
 struct Args {
+    /// rom path
     source_bin: Option<PathBuf>,
+    #[clap(long)]
     preset: Option<PathBuf>,
+    #[clap(long)]
     filename: Option<String>,
 }
 
@@ -534,11 +541,45 @@ impl Default for Args {
     }
 }
 
-fn main() {
+async fn patch_cli(preset: &Preset, file_path: &PathBuf, filename: String) -> anyhow::Result<()> {
+    mkpsxiso::extract(&file_path).await?;
+
+    let rom_name = file_path
+        .file_name()
+        .context("Failed file name get")?
+        .to_str()
+        .context("Failed to_str conversion")?;
+
+    for (cond, patch) in get_patches(&preset) {
+        if cond {
+            apply_patch(&patch, rom_name).await?;
+        }
+    }
+
+    create_dir_all(format!("patched/{}/{}", rom_name, filename)).await?;
+
+    mkpsxiso::build(&rom_name, filename).await?;
+
+    Ok(())
+}
+
+fn main() -> anyhow::Result<()> {
     let args = Args::parse();
 
-    if args.source_bin.is_some() {
-        todo!("need to make this")
+    let rt = Runtime::new()?;
+
+    if let Some(file_path) = args.source_bin {
+        let mut preset = Preset::default();
+
+        if let Some(preset_path) = args.preset {
+            let raw_file = std::fs::read_to_string(preset_path)?;
+
+            preset = serde_json::from_str(raw_file.as_str())?;
+        }
+
+        let filename = args.filename.unwrap_or("default".to_string());
+
+        rt.block_on(patch_cli(&preset, &file_path, filename))?;
     } else {
         LaunchBuilder::desktop()
             .with_cfg(
@@ -553,4 +594,6 @@ fn main() {
             )
             .launch(app);
     }
+
+    Ok(())
 }

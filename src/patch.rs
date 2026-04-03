@@ -24,7 +24,7 @@ async fn patch_file(patch: &Patch, rom_name: &str) -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn apply_patch(patch_json: &PatchJSON, rom_name: &str) -> anyhow::Result<()> {
+pub async fn apply_patch(patch_json: &PatchJSON, rom_name: &str) -> anyhow::Result<()> {
     for patch in &patch_json.changes {
         patch_file(&patch, rom_name).await?;
     }
@@ -99,6 +99,41 @@ static RANDOM_ENCOUNTERS_DISABLE_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
     .unwrap()
 });
 
+pub fn get_patches(preset: &Preset) -> Vec<(bool, &'static Lazy<PatchJSON>)> {
+    vec![
+        (preset.fast_text, &FAST_TEXT_PATCH),
+        (preset.fixed_fields, &FIXED_FIELD_PATCH),
+        (preset.improved_hp_proxy, &IMPROVED_HP_PROXY_PATCH),
+        (preset.ntsc, &NTSC_PATCH),
+        (preset.uncapped_dv_exp, &UNCAPPED_DV_EXP_PATCH),
+        (preset.card_battle_disable, &CARD_BATTLE_DISABLE_PATCH),
+        (preset.disable_script_items, &DISABLE_SCRIPT_ITEMS_PATCH),
+        (preset.fast_admin_center, &FAST_ADMIN_CENTER_PATCH),
+        (preset.fast_baronmon, &FAST_BARONMON_PATCH),
+        (preset.fast_sepikmon, &FAST_SEPIKMON_PATCH),
+        (preset.fast_start, &FAST_START_PATCH),
+        (
+            preset.disable_fishing_kicking,
+            &FISHING_KICKING_DISABLE_PATCH,
+        ),
+        (
+            preset.folder_bag_cutscene_skip,
+            &FOLDER_BAG_CUTSCENE_SKIP_PATCH,
+        ),
+        (
+            preset.forced_encounter_disable,
+            &FORCED_ENCOUNTERS_DISABLE_PATCH,
+        ),
+        (preset.no_counter_crest, &NO_CC_PATCH),
+        (preset.no_running_away, &NO_RUNNING_AWAY_PATCH),
+        (preset.post_game_unlock, &POST_GAME_UNLOCK_PATCH),
+        (
+            preset.random_encounter_disable,
+            &RANDOM_ENCOUNTERS_DISABLE_PATCH,
+        ),
+    ]
+}
+
 macro_rules! update_count {
     ($count:ident, $max_count:expr, $state:expr) => {{
         $count += 1;
@@ -133,7 +168,7 @@ pub fn patch() -> Element {
                 r#type: "button",
                 id: "patch",
                 onclick: move |_| {
-                    to_owned![args];
+                    to_owned![args, preset];
 
                     if randomizing.is_some() {
                         return;
@@ -162,80 +197,11 @@ pub fn patch() -> Element {
                                         .context("Failed file name get")?
                                         .to_str()
                                         .context("Failed to_str conversion")?;
-                                    if preset.fast_text {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&FAST_TEXT_PATCH, rom_name).await?;
-                                    }
-                                    if preset.fixed_fields {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&FIXED_FIELD_PATCH, rom_name).await?;
-                                    }
-                                    if preset.improved_hp_proxy {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&IMPROVED_HP_PROXY_PATCH, rom_name).await?;
-                                    }
-                                    if preset.ntsc {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&NTSC_PATCH, rom_name).await?;
-                                    }
-                                    if preset.uncapped_dv_exp {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&UNCAPPED_DV_EXP_PATCH, rom_name).await?;
-                                    }
-                                    if preset.card_battle_disable {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&CARD_BATTLE_DISABLE_PATCH, rom_name).await?;
-                                    }
-                                    if preset.disable_script_items {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&DISABLE_SCRIPT_ITEMS_PATCH, rom_name).await?;
-                                    }
-                                    if preset.fast_admin_center {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&FAST_ADMIN_CENTER_PATCH, rom_name).await?;
-                                    }
-                                    if preset.fast_baronmon {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&FAST_BARONMON_PATCH, rom_name).await?;
-                                    }
-                                    if preset.fast_sepikmon {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&FAST_SEPIKMON_PATCH, rom_name).await?;
-                                    }
-                                    if preset.fast_start {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&FAST_START_PATCH, rom_name).await?;
-                                    }
-                                    if preset.disable_fishing_kicking {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&FISHING_KICKING_DISABLE_PATCH, rom_name).await?;
-                                    }
-                                    if preset.folder_bag_cutscene_skip {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&FOLDER_BAG_CUTSCENE_SKIP_PATCH, rom_name)
-                                            .await?;
-                                    }
-                                    if preset.forced_encounter_disable {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&FORCED_ENCOUNTERS_DISABLE_PATCH, rom_name)
-                                            .await?;
-                                    }
-                                    if preset.no_counter_crest {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&NO_CC_PATCH, rom_name).await?;
-                                    }
-                                    if preset.no_running_away {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&NO_RUNNING_AWAY_PATCH, rom_name).await?;
-                                    }
-                                    if preset.post_game_unlock {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&POST_GAME_UNLOCK_PATCH, rom_name).await?;
-                                    }
-                                    if preset.random_encounter_disable {
-                                        update_count!(count, max_count, randomizing_state);
-                                        apply_patch(&RANDOM_ENCOUNTERS_DISABLE_PATCH, rom_name)
-                                            .await?;
+                                    for (cond, patch) in get_patches(&preset) {
+                                        if cond {
+                                            update_count!(count, max_count, randomizing_state);
+                                            apply_patch(&patch, rom_name).await?;
+                                        }
                                     }
                                     update_count!(count, max_count, randomizing_state);
                                     let filename = args.filename.unwrap_or("default".to_string());
