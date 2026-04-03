@@ -76,7 +76,7 @@ fn app() -> Element {
         None => String::from("Rom File"),
     };
 
-    let checksum_status = args.source_bin.map(|_| match checksum {
+    let checksum_status = args.source_bin.as_ref().map(|_| match checksum {
         ChecksumStatus::DigimonWorld2003 => (
             "✓ Digimon World 2003",
             "lawngreen",
@@ -165,6 +165,20 @@ fn app() -> Element {
                         }
                     }
                     patch::patch {}
+                    div {
+                        label {
+                            r#for: "filename",
+                            "Filename"
+                        }
+                        input {
+                            r#type: "text",
+                            id: "filename",
+                            value: args.filename.clone().unwrap_or("default".to_string()),
+                            onchange: move |x| {
+                                args_state.write().filename = Some(x.value());
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -407,7 +421,9 @@ fn app() -> Element {
                             r#type: "button",
                             id: "default",
                             onclick: move |_| {
-                                preset_state.set(Preset::default());
+                                let preset = Preset::default();
+                                args_state.write().filename = Some(preset.name.clone());
+                                preset_state.set(preset);
                             },
                         }
                     }
@@ -417,7 +433,9 @@ fn app() -> Element {
                             r#type: "button",
                             id: "ironmon",
                             onclick: move |_| {
-                                preset_state.set(Preset::ironmon());
+                                let preset = Preset::ironmon();
+                                args_state.write().filename = Some(preset.name.clone());
+                                preset_state.set(preset);
                             },
                         }
                     }
@@ -434,7 +452,10 @@ fn app() -> Element {
                                         let raw_file = read_to_string(fpath).await.unwrap();
 
                                         match serde_json::from_str::<Preset>(raw_file.as_str()) {
-                                            Ok(preset) => preset_state.set(preset),
+                                            Ok(preset) => {
+                                                args_state.write().filename = Some(preset.name.clone());
+                                                preset_state.set(preset)
+                                            },
                                             Err(_) => {
                                                 info_state
                                                     .set(InfoState {
@@ -453,7 +474,10 @@ fn app() -> Element {
                             r#type: "button",
                             id: "export",
                             onclick: move |_| {
-                                to_owned![preset];
+                                to_owned![preset, args];
+
+                                preset.name = args.filename.unwrap_or("default".to_string());
+
 
                                 async move {
                                     let task: Result<(), anyhow::Error> = async move {
@@ -490,7 +514,7 @@ impl Default for Args {
         Self {
             source_bin: None,
             preset: None,
-            filename: None,
+            filename: Some("default".to_string()),
         }
     }
 }

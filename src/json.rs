@@ -20,6 +20,7 @@ pub struct Preset {
     pub improved_hp_proxy: bool,
     pub ntsc: bool,
     pub uncapped_dv_exp: bool,
+    pub name: String,
 }
 
 impl Default for Preset {
@@ -43,6 +44,7 @@ impl Default for Preset {
             improved_hp_proxy: false,
             ntsc: true,
             uncapped_dv_exp: false,
+            name: "default".to_string(),
         }
     }
 }
@@ -94,6 +96,7 @@ impl Preset {
             improved_hp_proxy: false,
             ntsc: true,
             uncapped_dv_exp: true,
+            name: "ironmon".to_string(),
         }
     }
 }
