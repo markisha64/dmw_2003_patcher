@@ -32,69 +32,96 @@ pub async fn apply_patch(patch_json: &PatchJSON, rom_name: &str) -> anyhow::Resu
     Ok(())
 }
 
-static FAST_TEXT_PATCH: Lazy<PatchJSON> =
-    Lazy::new(|| serde_json::from_str(include_str!("../Dmw2003FastText/patcher.json")).unwrap());
+static FAST_TEXT_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
+    serde_json::from_str(include_str!("../patches/Dmw2003FastText/patcher.json")).unwrap()
+});
 static FIXED_FIELD_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
-    serde_json::from_str(include_str!("../dmw2003fixed_fields/patcher.json")).unwrap()
+    serde_json::from_str(include_str!("../patches/dmw2003fixed_fields/patcher.json")).unwrap()
 });
 static IMPROVED_HP_PROXY_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
-    serde_json::from_str(include_str!("../dmw2003improved_hp_proxy/patcher.json")).unwrap()
+    serde_json::from_str(include_str!(
+        "../patches/dmw2003improved_hp_proxy/patcher.json"
+    ))
+    .unwrap()
 });
-static NTSC_PATCH: Lazy<PatchJSON> =
-    Lazy::new(|| serde_json::from_str(include_str!("../dmw2003NTSC/patcher.json")).unwrap());
+static NTSC_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
+    serde_json::from_str(include_str!("../patches/dmw2003NTSC/patcher.json")).unwrap()
+});
 static UNCAPPED_DV_EXP_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
-    serde_json::from_str(include_str!("../dmw2003uncapped_dv_exp/patcher.json")).unwrap()
+    serde_json::from_str(include_str!(
+        "../patches/dmw2003uncapped_dv_exp/patcher.json"
+    ))
+    .unwrap()
 });
 static CARD_BATTLE_DISABLE_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
-    serde_json::from_str(include_str!("../dmw_2003_card_battle_disable/patcher.json")).unwrap()
+    serde_json::from_str(include_str!(
+        "../patches/dmw_2003_card_battle_disable/patcher.json"
+    ))
+    .unwrap()
 });
 static DISABLE_SCRIPT_ITEMS_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
     serde_json::from_str(include_str!(
-        "../dmw_2003_disable_script_items/patcher.json"
+        "../patches/dmw_2003_disable_script_items/patcher.json"
     ))
     .unwrap()
 });
 static FAST_ADMIN_CENTER_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
-    serde_json::from_str(include_str!("../dmw_2003_fast_admin_center/patcher.json")).unwrap()
+    serde_json::from_str(include_str!(
+        "../patches/dmw_2003_fast_admin_center/patcher.json"
+    ))
+    .unwrap()
 });
 static FAST_BARONMON_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
-    serde_json::from_str(include_str!("../dmw_2003_fast_baronmon/patcher.json")).unwrap()
+    serde_json::from_str(include_str!(
+        "../patches/dmw_2003_fast_baronmon/patcher.json"
+    ))
+    .unwrap()
 });
 static FAST_SEPIKMON_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
-    serde_json::from_str(include_str!("../dmw_2003_fast_sepikmon/patcher.json")).unwrap()
+    serde_json::from_str(include_str!(
+        "../patches/dmw_2003_fast_sepikmon/patcher.json"
+    ))
+    .unwrap()
 });
 static FAST_START_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
-    serde_json::from_str(include_str!("../dmw_2003_fast_start/patcher.json")).unwrap()
+    serde_json::from_str(include_str!("../patches/dmw_2003_fast_start/patcher.json")).unwrap()
 });
 static FISHING_KICKING_DISABLE_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
     serde_json::from_str(include_str!(
-        "../dmw_2003_fishing_kicking_disable/patcher.json"
+        "../patches/dmw_2003_fishing_kicking_disable/patcher.json"
     ))
     .unwrap()
 });
 static FOLDER_BAG_CUTSCENE_SKIP_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
     serde_json::from_str(include_str!(
-        "../dmw_2003_folder_bag_cutscene_skip/patcher.json"
+        "../patches/dmw_2003_folder_bag_cutscene_skip/patcher.json"
     ))
     .unwrap()
 });
 static FORCED_ENCOUNTERS_DISABLE_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
     serde_json::from_str(include_str!(
-        "../dmw_2003_forced_encounters_disable/patcher.json"
+        "../patches/dmw_2003_forced_encounters_disable/patcher.json"
     ))
     .unwrap()
 });
-static NO_CC_PATCH: Lazy<PatchJSON> =
-    Lazy::new(|| serde_json::from_str(include_str!("../dmw_2003_no_cc/patcher.json")).unwrap());
+static NO_CC_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
+    serde_json::from_str(include_str!("../patches/dmw_2003_no_cc/patcher.json")).unwrap()
+});
 static NO_RUNNING_AWAY_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
-    serde_json::from_str(include_str!("../dmw_2003_no_running_away/patcher.json")).unwrap()
+    serde_json::from_str(include_str!(
+        "../patches/dmw_2003_no_running_away/patcher.json"
+    ))
+    .unwrap()
 });
 static POST_GAME_UNLOCK_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
-    serde_json::from_str(include_str!("../dmw_2003_post_game_unlock/patcher.json")).unwrap()
+    serde_json::from_str(include_str!(
+        "../patches/dmw_2003_post_game_unlock/patcher.json"
+    ))
+    .unwrap()
 });
 static RANDOM_ENCOUNTERS_DISABLE_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
     serde_json::from_str(include_str!(
-        "../dmw_2003_random_encounters_disable/patcher.json"
+        "../patches/dmw_2003_random_encounters_disable/patcher.json"
     ))
     .unwrap()
 });
