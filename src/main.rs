@@ -335,6 +335,18 @@ fn app() -> Element {
                             },
                         }
                     }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Fast Travel",
+                            tooltip: "Adds Fast Travel To The Game, Press X On The Map To Select It, Press Square To Change Server",
+                            id: "fast_start_checkbox",
+                            checked: preset.fast_travel,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().fast_travel = x;
+                            },
+                        }
+                    }
                 }
             }
             div { class: "column",

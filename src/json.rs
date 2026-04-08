@@ -20,6 +20,7 @@ pub struct Preset {
     pub improved_hp_proxy: bool,
     pub ntsc: bool,
     pub uncapped_dv_exp: bool,
+    pub fast_travel: bool,
     pub name: String,
 }
 
@@ -44,6 +45,7 @@ impl Default for Preset {
             improved_hp_proxy: false,
             ntsc: true,
             uncapped_dv_exp: false,
+            fast_travel: false,
             name: "default".to_string(),
         }
     }
@@ -70,6 +72,7 @@ impl Preset {
             self.improved_hp_proxy,
             self.ntsc,
             self.uncapped_dv_exp,
+            self.fast_travel,
         ]
         .iter()
         .filter(|&&b| b)
@@ -96,6 +99,7 @@ impl Preset {
             improved_hp_proxy: false,
             ntsc: true,
             uncapped_dv_exp: true,
+            fast_travel: false,
             name: "ironmon".to_string(),
         }
     }
