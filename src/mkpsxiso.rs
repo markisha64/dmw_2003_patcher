@@ -1,4 +1,5 @@
 use anyhow::Context as _;
+use anyhow::anyhow;
 use tokio::process::Command;
 
 async fn exists(exec: &str) -> anyhow::Result<bool> {
@@ -18,7 +19,7 @@ async fn find_bin(name: &str) -> anyhow::Result<String> {
     Err(anyhow::anyhow!("Can't find bin"))
 }
 
-pub async fn extract(path: &std::path::PathBuf) -> anyhow::Result<bool> {
+pub async fn extract(path: &std::path::PathBuf) -> anyhow::Result<()> {
     let bin = find_bin("dumpsxiso").await?;
 
     let file_name = path
@@ -27,26 +28,31 @@ pub async fn extract(path: &std::path::PathBuf) -> anyhow::Result<bool> {
         .to_str()
         .context("failed to convert file name to string")?;
 
-    Ok(Command::new(bin)
+    let output = Command::new(bin)
         .arg("-x")
         .arg(format!("extract/{}/", file_name))
         .arg("-s")
         .arg("extract/out.xml")
         .arg("-pt")
+        .arg("--lba")
         .arg(path)
         .output()
-        .await?
-        .status
-        .success())
+        .await?;
+
+    if !output.status.success() {
+        return Err(anyhow!(String::from_utf8_lossy(&output.stdout).to_string()));
+    }
+
+    Ok(())
 }
 
-pub async fn build(rom_name: &str, filename: String) -> anyhow::Result<bool> {
+pub async fn build(rom_name: &str, filename: String) -> anyhow::Result<()> {
     let binf = find_bin("mkpsxiso").await?;
 
     let bin = format!("patched/{}/{}/new.bin", rom_name, filename);
     let cue = format!("patched/{}/{}/new.cue", rom_name, filename);
 
-    Ok(Command::new(binf)
+    let output = Command::new(binf)
         .arg("-o")
         .arg(&bin)
         .arg("-c")
@@ -54,7 +60,11 @@ pub async fn build(rom_name: &str, filename: String) -> anyhow::Result<bool> {
         .arg("extract/out.xml")
         .arg("-y")
         .output()
-        .await?
-        .status
-        .success())
+        .await?;
+
+    if !output.status.success() {
+        return Err(anyhow!(String::from_utf8_lossy(&output.stdout).to_string()));
+    }
+
+    Ok(())
 }
