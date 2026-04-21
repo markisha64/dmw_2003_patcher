@@ -109,4 +109,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         fail_on_unmatched_files: true
-        files: dist/*
+        files: |
+          dmw-2003-patcher-linux/*
+          dmw-2003-patcher-windows/*
+
