@@ -21,11 +21,11 @@ jobs:
       run: |
         sudo apt-get update -y
         sudo apt-get install -y build-essential ninja-build libgdk3.0-cil libatk1.0-dev libcairo2-dev libpango1.0-dev libgdk-pixbuf2.0-dev libsoup-3.0-dev libjavascriptcoregtk-4.1-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev libxdo-dev
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: recursive
     - name: Cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           ~/.cargo
@@ -50,7 +50,7 @@ jobs:
         cp mkpsxiso/build/Release/dumpsxiso artifact/
         zip -r dmw-2003-patcher-linux.zip artifact
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: dmw-2003-patcher-linux
         path: dmw-2003-patcher-linux.zip
@@ -59,11 +59,11 @@ jobs:
     runs-on: windows-2022
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: recursive
     - name: Cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           $HOME/.cargo
@@ -87,7 +87,7 @@ jobs:
         xcopy mkpsxiso\build\Release\*.exe artifact\
         Compress-Archive -Path artifact\* -DestinationPath dmw-2003-patcher-windows.zip
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: dmw-2003-patcher-windows
         path: dmw-2003-patcher-windows.zip
@@ -100,13 +100,13 @@ jobs:
     steps:
     - name: Fetch build artifacts
       if:   ${{ github.ref_type == 'tag' }}
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         path: .
   
     - name: Publish release
       if:   ${{ github.ref_type == 'tag' }}
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         fail_on_unmatched_files: true
         files: |
