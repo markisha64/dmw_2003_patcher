@@ -21,6 +21,7 @@ pub struct Preset {
     pub ntsc: bool,
     pub uncapped_dv_exp: bool,
     pub fast_travel: bool,
+    pub japanese: bool,
     pub name: String,
 }
 
@@ -46,6 +47,7 @@ impl Default for Preset {
             ntsc: true,
             uncapped_dv_exp: false,
             fast_travel: false,
+            japanese: false,
             name: "default".to_string(),
         }
     }
@@ -73,6 +75,7 @@ impl Preset {
             self.ntsc,
             self.uncapped_dv_exp,
             self.fast_travel,
+            self.japanese,
         ]
         .iter()
         .filter(|&&b| b)
@@ -100,6 +103,7 @@ impl Preset {
             ntsc: true,
             uncapped_dv_exp: true,
             fast_travel: false,
+            japanese: false,
             name: "ironmon".to_string(),
         }
     }

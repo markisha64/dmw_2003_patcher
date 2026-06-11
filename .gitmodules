@@ -55,3 +55,6 @@
 [submodule "dmw_2003_card_battle_disable"]
 	path = patches/dmw_2003_card_battle_disable
 	url = https://github.com/markisha64/dmw_2003_card_battle_disable
+[submodule "patches/dmw_2003_japanese"]
+	path = patches/dmw_2003_japanese
+	url = https://github.com/markisha64/dmw_2003_japanese

@@ -439,6 +439,18 @@ fn app() -> Element {
                             },
                         }
                     }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Japanese",
+                            tooltip: "Set language to Japanese",
+                            id: "japanese",
+                            checked: preset.japanese,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().japanese = x;
+                            },
+                        }
+                    }
                 }
             }
             div { class: "column",
