@@ -4,6 +4,31 @@
 
 The Digimon World 2003 Patcher is a tool made to simplify applying multiple patches to Digimon World 2003.
 
+## Patches
+
+| Patch | Description |
+|-------|-------------|
+| Card Battle Disable | Disables card battles |
+| Disable Script Items | Disables script item/BITS pickups |
+| Fast Admin Center | Skips Staff Pass Quest |
+| Fast Baronmon | Skips full trip to Pheonix Bay (you can just visit Baronmon and get TNT Chip) |
+| Fast Sepikmon | Skips Sepikmon quest (Jungle Grave) |
+| Fast Start | Skips intro/startup sequences |
+| Fast Text | Built-in X turbo for textboxes |
+| Fishing Kicking Disable | Disables fishing and kicking |
+| Fixed Fields | Fixes the bug where all field moves use Thunder Field |
+| Folder Bag Cutscene Skip | Skips the folder bag cutscene |
+| Forced Encounters Disable | Disables forced encounters |
+| Improved HP Proxy | Makes HP Proxy/HP Mega Proxy reduce damage by 10%/20% instead of a flat 10/20 HP |
+| Japanese | Sets the game language to Japanese and skips the language select screen |
+| No Counter Crest | Removes Tuskmon's Counter Crest item drop |
+| No Running Away | Makes escaping from battles always fail |
+| NTSC | Makes the PAL version run in 60 fps (NTSC) |
+| Post Game Unlock | Unlocks the post game fights without having legendary weapons |
+| Random Encounters Disable | Disables random encounters |
+| Uncapped Digivolution EXP | Removes the cap on digivolution experience gain |
+| Fast Travel | Adds fast travel functionality |
+
 ## Download
 Get the latest [Release](https://github.com/markisha64/dmw_2003_patcher/releases)
 
