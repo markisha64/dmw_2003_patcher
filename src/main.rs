@@ -451,6 +451,18 @@ fn app() -> Element {
                             },
                         }
                     }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "DRI Unlock",
+                            tooltip: "Let's you fight DDNA Ultimates even if you have rookie unlocked",
+                            id: "dri_unlock",
+                            checked: preset.dri_unlock,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().dri_unlock = x;
+                            },
+                        }
+                    }
                 }
             }
             div { class: "column",

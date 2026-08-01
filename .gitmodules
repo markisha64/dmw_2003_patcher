@@ -58,3 +58,6 @@
 [submodule "patches/dmw_2003_japanese"]
 	path = patches/dmw_2003_japanese
 	url = https://github.com/markisha64/dmw_2003_japanese
+[submodule "patches/dmw_2003_dri_unlock"]
+	path = patches/dmw_2003_dri_unlock
+	url = https://github.com/markisha64/dmw_2003_dri_unlock

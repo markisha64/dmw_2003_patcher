@@ -131,6 +131,9 @@ static FAST_TRAVEL_PATCH: Lazy<PatchJSON> = Lazy::new(|| {
 static JAPANESE: Lazy<PatchJSON> = Lazy::new(|| {
     serde_json::from_str(include_str!("../patches/dmw_2003_japanese/patch.json")).unwrap()
 });
+static DRI_UNLOCK: Lazy<PatchJSON> = Lazy::new(|| {
+    serde_json::from_str(include_str!("../patches/dmw_2003_dri_unlock/patch.json")).unwrap()
+});
 
 pub fn get_patches(preset: &Preset) -> Vec<(bool, &'static Lazy<PatchJSON>)> {
     vec![
@@ -166,6 +169,7 @@ pub fn get_patches(preset: &Preset) -> Vec<(bool, &'static Lazy<PatchJSON>)> {
         ),
         (preset.fast_travel, &FAST_TRAVEL_PATCH),
         (preset.japanese, &JAPANESE),
+        (preset.dri_unlock, &DRI_UNLOCK),
     ]
 }
 
