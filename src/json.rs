@@ -114,4 +114,33 @@ impl Preset {
             name: "ironmon".to_string(),
         }
     }
+
+    pub fn archipelago() -> Preset {
+        Preset {
+            card_battle_disable: true,
+            disable_script_items: true,
+            fast_admin_center: false,
+            fast_baronmon: false,
+            fast_sepikmon: false,
+            fast_start: true,
+            folder_bag_cutscene_skip: false,
+            no_counter_crest: false,
+            no_running_away: false,
+            post_game_unlock: true,
+            forced_encounter_disable: false,
+            random_encounter_disable: false,
+            disable_fishing_kicking: false,
+            fast_text: false,
+            fixed_fields: true,
+            improved_hp_proxy: false,
+            // bizhawk :)
+            ntsc: false,
+            uncapped_dv_exp: false,
+            fast_travel: false,
+            japanese: false,
+            dri_unlock: true,
+            ap_sepik_mask: true,
+            name: "archipelago".to_string(),
+        }
+    }
 }

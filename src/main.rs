@@ -508,6 +508,18 @@ fn app() -> Element {
                         }
                     }
                     div { class: "segment",
+                        label { r#for: "archipelago", "Archipelago" }
+                        input {
+                            r#type: "button",
+                            id: "archipelago",
+                            onclick: move |_| {
+                                let preset = Preset::archipelago();
+                                args_state.write().filename = Some(preset.name.clone());
+                                preset_state.set(preset);
+                            },
+                        }
+                    }
+                    div { class: "segment",
                         label { r#for: "import", "Import Preset" }
                         input {
                             id: "import",
