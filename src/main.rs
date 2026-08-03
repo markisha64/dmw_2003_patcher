@@ -429,6 +429,21 @@ fn app() -> Element {
                     div { "Other" }
                     div { class: "left",
                         checkbox::checkbox {
+                            label: "Japanese",
+                            tooltip: "Set language to Japanese",
+                            id: "japanese",
+                            checked: preset.japanese,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().japanese = x;
+                            },
+                        }
+                    }
+                }
+                div { class: "segment",
+                    div { "Archipelago" }
+                    div { class: "left",
+                        checkbox::checkbox {
                             label: "Disable Script Items",
                             tooltip: "Scripts No Longer Give Items And Bits",
                             id: "disable_script_items_checkbox",
@@ -441,18 +456,6 @@ fn app() -> Element {
                     }
                     div { class: "left",
                         checkbox::checkbox {
-                            label: "Japanese",
-                            tooltip: "Set language to Japanese",
-                            id: "japanese",
-                            checked: preset.japanese,
-                            disabled: false,
-                            onchange: move |x: bool| {
-                                preset_state.write().japanese = x;
-                            },
-                        }
-                    }
-                    div { class: "left",
-                        checkbox::checkbox {
                             label: "DRI Unlock",
                             tooltip: "Let's you fight DDNA Ultimates even if you have rookie unlocked",
                             id: "dri_unlock",
@@ -460,6 +463,18 @@ fn app() -> Element {
                             disabled: false,
                             onchange: move |x: bool| {
                                 preset_state.write().dri_unlock = x;
+                            },
+                        }
+                    }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Archipelago Sepik Mask",
+                            tooltip: "Sepik Mask Behavior For Archipelago",
+                            id: "ap_sepik_mask_checkbox",
+                            checked: preset.ap_sepik_mask,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().ap_sepik_mask = x;
                             },
                         }
                     }

@@ -23,6 +23,7 @@ pub struct Preset {
     pub fast_travel: bool,
     pub japanese: bool,
     pub dri_unlock: bool,
+    pub ap_sepik_mask: bool,
     pub name: String,
 }
 
@@ -50,6 +51,7 @@ impl Default for Preset {
             fast_travel: false,
             japanese: false,
             dri_unlock: false,
+            ap_sepik_mask: false,
             name: "default".to_string(),
         }
     }
@@ -108,6 +110,7 @@ impl Preset {
             fast_travel: false,
             japanese: false,
             dri_unlock: false,
+            ap_sepik_mask: false,
             name: "ironmon".to_string(),
         }
     }
