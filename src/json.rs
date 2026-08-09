@@ -24,6 +24,7 @@ pub struct Preset {
     pub japanese: bool,
     pub dri_unlock: bool,
     pub ap_sepik_mask: bool,
+    pub ap_zhu_que_unlock: bool,
     pub name: String,
 }
 
@@ -52,6 +53,7 @@ impl Default for Preset {
             japanese: false,
             dri_unlock: false,
             ap_sepik_mask: false,
+            ap_zhu_que_unlock: false,
             name: "default".to_string(),
         }
     }
@@ -81,6 +83,8 @@ impl Preset {
             self.fast_travel,
             self.japanese,
             self.dri_unlock,
+            self.ap_sepik_mask,
+            self.ap_zhu_que_unlock,
         ]
         .iter()
         .filter(|&&b| b)
@@ -111,6 +115,7 @@ impl Preset {
             japanese: false,
             dri_unlock: false,
             ap_sepik_mask: false,
+            ap_zhu_que_unlock: false,
             name: "ironmon".to_string(),
         }
     }
@@ -140,6 +145,7 @@ impl Preset {
             japanese: false,
             dri_unlock: true,
             ap_sepik_mask: true,
+            ap_zhu_que_unlock: true,
             name: "archipelago".to_string(),
         }
     }

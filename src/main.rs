@@ -478,6 +478,18 @@ fn app() -> Element {
                             },
                         }
                     }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Archipelago Zhu Que Unlock",
+                            tooltip: "Removes The Phoenix Bay Quest Lock, Trades Just Require Powerful Pack",
+                            id: "ap_zhu_que_unlock_checkbox",
+                            checked: preset.ap_zhu_que_unlock,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().ap_zhu_que_unlock = x;
+                            },
+                        }
+                    }
                 }
             }
             div { class: "column",

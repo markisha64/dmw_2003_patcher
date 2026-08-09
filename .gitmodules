@@ -64,3 +64,6 @@
 [submodule "patches/dmw_2003_ap_sepik_mask"]
 	path = patches/dmw_2003_ap_sepik_mask
 	url = https://github.com/markisha64/dmw_2003_ap_sepik_mask
+[submodule "patches/dmw_2003_ap_zhu_que_unlock"]
+	path = patches/dmw_2003_ap_zhu_que_unlock
+	url = https://github.com/markisha64/dmw_2003_ap_zhu_que_unlock.git
