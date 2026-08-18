@@ -478,6 +478,18 @@ fn app() -> Element {
                             },
                         }
                     }
+                    div { class: "left",
+                        checkbox::checkbox {
+                            label: "Archipelago Keith",
+                            tooltip: "Keith Unlock Behavior For Archipelago",
+                            id: "ap_keith_checkbox",
+                            checked: preset.ap_keith,
+                            disabled: false,
+                            onchange: move |x: bool| {
+                                preset_state.write().ap_keith = x;
+                            },
+                        }
+                    }
                 }
             }
             div { class: "column",

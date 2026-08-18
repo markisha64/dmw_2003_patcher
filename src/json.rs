@@ -24,6 +24,7 @@ pub struct Preset {
     pub japanese: bool,
     pub dri_unlock: bool,
     pub ap_sepik_mask: bool,
+    pub ap_keith: bool,
     pub name: String,
 }
 
@@ -52,6 +53,7 @@ impl Default for Preset {
             japanese: false,
             dri_unlock: false,
             ap_sepik_mask: false,
+            ap_keith: false,
             name: "default".to_string(),
         }
     }
@@ -111,6 +113,7 @@ impl Preset {
             japanese: false,
             dri_unlock: false,
             ap_sepik_mask: false,
+            ap_keith: false,
             name: "ironmon".to_string(),
         }
     }
@@ -126,7 +129,7 @@ impl Preset {
             folder_bag_cutscene_skip: false,
             no_counter_crest: false,
             no_running_away: false,
-            post_game_unlock: true,
+            post_game_unlock: false,
             forced_encounter_disable: false,
             random_encounter_disable: false,
             disable_fishing_kicking: false,
@@ -140,6 +143,7 @@ impl Preset {
             japanese: false,
             dri_unlock: true,
             ap_sepik_mask: true,
+            ap_keith: true,
             name: "archipelago".to_string(),
         }
     }
